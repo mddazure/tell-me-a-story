@@ -80,7 +80,7 @@ app.post('/api/generate-story', async (req, res) => {
     
     // Add special instructions for Russian language
     const russianInstructions = language.toLowerCase() === 'russian' ? 
-      ' IMPORTANT: Use ONLY standard typed Cyrillic characters (печатные буквы), NOT handwritten/cursive characters (прописные буквы). Use the standard computer keyboard Cyrillic alphabet.' : '';
+      ' IMPORTANT: Use ONLY standard typed Cyrillic characters (печатные буквы), NOT handwritten/cursive characters (прописные буквы). Use the standard computer keyboard Cyrillic alphabet like: А, Б, В, Г, Д, Е, Ё, Ж, З, И, Й, К, Л, М, Н, О, П, Р, С, Т, У, Ф, Х, Ц, Ч, Ш, Щ, Ъ, Ы, Ь, Э, Ю, Я and their lowercase equivalents.' : '';
     
     const storyPrompt = `Generate a short story in ${language} at ${proficiency.toUpperCase()} proficiency level about the theme: ${theme}. The story should be approximately ${wordCount} words long. Make it engaging and appropriate for language learners at this level. Include vocabulary and cultural context related to ${theme} that would be interesting for learners.${russianInstructions}`;
     
@@ -110,12 +110,16 @@ app.post('/api/generate-story', async (req, res) => {
     );
     
     // Generate the title
+    const titleSystemMessage = language.toLowerCase() === 'russian' ? 
+      'You are a creative title generator for language learning stories. Generate concise, engaging titles. For Russian text, use ONLY standard typed Cyrillic characters (печатные буквы), never handwritten/cursive forms (прописные буквы).' :
+      'You are a creative title generator for language learning stories. Generate concise, engaging titles.';
+    
     const titleResponse = await openAIClient.getChatCompletions(
       deploymentName,
       [
         {
           role: 'system',
-          content: 'You are a creative title generator for language learning stories. Generate concise, engaging titles.'
+          content: titleSystemMessage
         },
         {
           role: 'user',
