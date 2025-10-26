@@ -112,7 +112,7 @@ app.post('/api/generate-story', async (req, res) => {
     // Generate the title
     const titleSystemMessage = language.toLowerCase() === 'russian' ? 
       'You are a creative title generator for language learning stories. Generate concise, engaging titles. For Russian text, use ONLY standard typed Cyrillic characters (печатные буквы), never handwritten/cursive forms (прописные буквы).' :
-      'You are a creative title generator for language learning stories. Generate concise, engaging titles.';
+      'You are a creative title generator for language learning stories. Generate concise, engaging titles. Use ONLY standard typed Cyrillic characters (печатные буквы), never handwritten/cursive forms (прописные буквы).';
     
     const titleResponse = await openAIClient.getChatCompletions(
       deploymentName,
