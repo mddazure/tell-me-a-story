@@ -1,0 +1,42 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "value": "foreign-language-stories"
+    },
+    "location": {
+      "value": "swedencentral"
+    },
+    "createNewAppServicePlan": {
+      "value": false
+    },
+    "appServicePlanName": {
+      "value": "existing-app-service-plan"
+    },
+    "appServicePlanResourceGroup": {
+      "value": "existing-resource-group"
+    },
+    "appServicePlanSku": {
+      "value": "B1"
+    },
+    "createNewOpenAiService": {
+      "value": false
+    },
+    "openAiServiceName": {
+      "value": "russian-tutor-openai"
+    },
+    "openAiResourceGroup": {
+      "value": "existing-resource-group"
+    },
+    "openAiDeploymentName": {
+      "value": "gpt-4o"
+    },
+    "openAiModelName": {
+      "value": "gpt-4o"
+    },
+    "openAiModelVersion": {
+      "value": "2024-05-13"
+    }
+  }
+}

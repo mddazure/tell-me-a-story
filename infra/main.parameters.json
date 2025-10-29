@@ -6,22 +6,22 @@
       "value": "foreign-language-stories"
     },
     "location": {
-      "value": "eastus"
+      "value": "swedencentral"
     },
     "appServicePlanSku": {
       "value": "B1"
     },
     "openAiServiceName": {
-      "value": "openai-foreign-stories"
+      "value": "russian-tutor-openai"
     },
     "openAiDeploymentName": {
-      "value": "gpt-4"
+      "value": "gpt-4o"
     },
     "openAiModelName": {
-      "value": "gpt-4"
+      "value": "gpt-4o"
     },
     "openAiModelVersion": {
-      "value": "2024-02-15-preview"
+      "value": "2024-05-13"
     }
   }
 }
