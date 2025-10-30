@@ -33,7 +33,6 @@ class RussianStoryGenerator {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    language: 'russian',
                     proficiency,
                     theme,
                     wordCount: parseInt(wordCount)
@@ -85,8 +84,7 @@ class RussianStoryGenerator {
                 },
                 body: JSON.stringify({
                     story: this.currentStory,
-                    type,
-                    language: 'russian'
+                    type
                 })
             });
 
@@ -153,8 +151,26 @@ document.addEventListener('keydown', function(event) {
     }
 });
 
-// Add form validation feedback
+// Add form validation feedback and event listeners
 document.addEventListener('DOMContentLoaded', function() {
+    // Add event listeners for buttons
+    const generateBtn = document.getElementById('generateBtn');
+    const comprehensionBtn = document.getElementById('comprehensionBtn');
+    const grammarBtn = document.getElementById('grammarBtn');
+    
+    if (generateBtn) {
+        generateBtn.addEventListener('click', generateStory);
+    }
+    
+    if (comprehensionBtn) {
+        comprehensionBtn.addEventListener('click', () => generateQuestions('comprehension'));
+    }
+    
+    if (grammarBtn) {
+        grammarBtn.addEventListener('click', () => generateQuestions('grammar'));
+    }
+    
+    // Form validation feedback
     const selects = document.querySelectorAll('select');
     selects.forEach(select => {
         select.addEventListener('change', function() {

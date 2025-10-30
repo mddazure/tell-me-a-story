@@ -1,14 +1,23 @@
-# 🌍 Foreign Language Story Generator | 🇷🇺 Скажи мне рассказ
+# 🌍 Foreign Language Story Generator
 
 AI-powered language learning applications that generate engaging stories with comprehension and grammar questions using Azure OpenAI. Available in two versions: **Multi-Language** and **Russian-Only**.
 
-## 📦 Quick Start with Docker
+## 🚀 **Status: Production Ready** ✅
+
+Both applications are **fully functional** and deployed to Docker Hub:
+- ✅ **Multi-Language Version**: Supporting 10+ languages with easy language selection
+- ✅ **Russian-Only Version**: "Скажи мне рассказ" - specialized for Russian learners  
+- ✅ **All Features Working**: Story generation, comprehension questions, grammar questions
+- ✅ **Security Hardened**: CSP-compliant, production security headers
+- ✅ **Docker Hub Ready**: Latest images available for immediate deployment
+
+##  Quick Start with Docker
 
 ### Multi-Language Version
 ```bash
 docker run -d \
   --name foreign-language-stories \
-  -p 3001:3000 \
+  -p 3000:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
   -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
@@ -19,7 +28,7 @@ docker run -d \
 ```bash
 docker run -d \
   --name skazhi-mne-rasskaz \
-  -p 3002:3000 \
+  -p 3001:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
   -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
@@ -39,7 +48,7 @@ docker run -d \
 ### 🇷🇺 **Russian-Only Version: "Скажи мне рассказ"**
 **Specialized for dedicated Russian learners**
 
-- 🇷� **Russian Flag Banner**: Beautiful "Скажи мне рассказ" branding
+- 🇷🇺 **Russian Flag Banner**: Beautiful "Скажи мне рассказ" branding
 - 🎯 **Russian-Only Focus**: No language selection, streamlined experience
 - 📝 **Full Russian Interface**: Complete immersion in Russian
 - 🔤 **Proper Cyrillic**: Uses only printed Cyrillic characters (печатные буквы)
@@ -48,7 +57,7 @@ docker run -d \
 ## 🎮 Features (Both Versions)
 
 - 📊 **CEFR Proficiency Levels**: A1 (Beginner) to C2 (Mastery)
-- � **Themed Stories**: 10 themes including Food, Travel, Work, Family, Culture
+- 🎭 **Themed Stories**: 10 themes including Food, Travel, Work, Family, Culture
 - 📏 **Flexible Length**: 200-1000 words
 - 🧠 **Comprehension Questions**: 5 questions testing story understanding
 - 📚 **Grammar Questions**: 5 questions focusing on language mechanics  
@@ -328,30 +337,6 @@ tell-me-a-story/
 - **Cloud Deployment** - Azure-native with managed identity
 - **Customization** - Open source for educational modifications
 
-## 🤝 Contributing
-
-We welcome contributions! Here's how to help:
-
-### **For Language Improvements**
-1. 🍴 Fork the repository
-2. 🌿 Create feature branch: `git checkout -b improve-spanish-grammar`
-3. ✏️ Make your changes (focus on language accuracy)
-4. 🧪 Test with different proficiency levels
-5. 📤 Submit pull request with detailed description
-
-### **For Technical Enhancements**
-1. 🐛 **Bug Reports** - Use GitHub Issues with reproduction steps
-2. 💡 **Feature Requests** - Describe use case and educational value
-3. 🔒 **Security Issues** - Report privately via GitHub Security Advisories
-4. 🐳 **Container Improvements** - Test across platforms
-
-### **Areas We Need Help With**
-- 🌍 Additional language support and accuracy
-- 🎨 UI/UX improvements for mobile devices
-- 📊 Analytics and learning progress tracking
-- 🔧 Performance optimizations
-- 📝 Educational content quality assurance
-
 ## 🔗 Links & Resources
 
 - **🐙 GitHub Repository**: https://github.com/mddazure/tell-me-a-story
@@ -371,15 +356,23 @@ We welcome contributions! Here's how to help:
 
 ### **Try Multi-Language Version:**
 ```bash
-docker run -p 3001:3000 madedroo/foreign-language-stories:latest
+docker run -p 3000:3000 \
+  -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
+  -e AZURE_OPENAI_API_KEY="your-api-key" \
+  -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  madedroo/foreign-language-stories:latest
 ```
-**Access:** http://localhost:3001
+**Access:** http://localhost:3000
 
 ### **Try Russian-Only Version:**  
 ```bash
-docker run -p 3002:3000 madedroo/russian-story-generator:latest
+docker run -p 3001:3000 \
+  -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
+  -e AZURE_OPENAI_API_KEY="your-api-key" \
+  -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  madedroo/russian-story-generator:latest
 ```
-**Access:** http://localhost:3002
+**Access:** http://localhost:3001
 
 *Note: You'll need Azure OpenAI credentials for full functionality*
 

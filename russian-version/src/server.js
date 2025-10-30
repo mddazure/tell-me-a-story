@@ -73,11 +73,19 @@ const russianInstructions = `
 // Story generation endpoint
 app.post('/api/generate-story', async (req, res) => {
   try {
+    console.log('Received request body:', req.body);
+    
     if (!openAIClient) {
+      console.error('OpenAI client not initialized');
       return res.status(500).json({ error: 'OpenAI client not initialized' });
     }
 
     const { proficiency, theme, wordCount } = req.body;
+    
+    if (!proficiency || !theme || !wordCount) {
+      console.error('Missing required parameters:', { proficiency, theme, wordCount });
+      return res.status(400).json({ error: 'Missing required parameters: proficiency, theme, wordCount' });
+    }
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4';
 
     // Create Russian-specific prompts
@@ -99,14 +107,17 @@ ${russianInstructions}
 - Заголовок должен быть на русском языке`;
 
     // Generate story
-    const storyResponse = await openAIClient.getChatCompletions(deploymentName, {
-      messages: [
+    const storyResponse = await openAIClient.getChatCompletions(
+      deploymentName,
+      [
         { role: 'system', content: `Вы профессиональный преподаватель русского языка, создающий учебные материалы. ${russianInstructions}` },
         { role: 'user', content: userPrompt }
       ],
-      maxTokens: Math.max(800, Math.floor(wordCount * 1.5)),
-      temperature: 0.8
-    });
+      {
+        maxTokens: Math.max(800, Math.floor(wordCount * 1.5)),
+        temperature: 0.8
+      }
+    );
 
     const story = storyResponse.choices[0].message.content;
 
@@ -117,14 +128,17 @@ ${story}
 
 ${russianInstructions}`;
 
-    const titleResponse = await openAIClient.getChatCompletions(deploymentName, {
-      messages: [
+    const titleResponse = await openAIClient.getChatCompletions(
+      deploymentName,
+      [
         { role: 'system', content: titleSystemMessage },
         { role: 'user', content: titlePrompt }
       ],
-      maxTokens: 20,
-      temperature: 0.7
-    });
+      {
+        maxTokens: 20,
+        temperature: 0.7
+      }
+    );
 
     const title = titleResponse.choices[0].message.content.replace(/[""«»]/g, '').trim();
 
@@ -135,18 +149,27 @@ ${russianInstructions}`;
 
   } catch (error) {
     console.error('Error generating story:', error);
-    res.status(500).json({ error: 'Failed to generate story' });
+    console.error('Error details:', error.message);
+    res.status(500).json({ error: 'Failed to generate story', details: error.message });
   }
 });
 
 // Questions generation endpoint
 app.post('/api/generate-questions', async (req, res) => {
   try {
+    console.log('Received questions request body:', req.body);
+    
     if (!openAIClient) {
+      console.error('OpenAI client not initialized for questions');
       return res.status(500).json({ error: 'OpenAI client not initialized' });
     }
 
     const { story, type } = req.body;
+    
+    if (!story || !type) {
+      console.error('Missing required parameters for questions:', { story: !!story, type });
+      return res.status(400).json({ error: 'Missing required parameters: story, type' });
+    }
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4';
 
     let systemMessage = '';
@@ -172,14 +195,17 @@ ${russianInstructions}
 Формат: просто пронумерованные вопросы без дополнительных инструкций.`;
     }
 
-    const response = await openAIClient.getChatCompletions(deploymentName, {
-      messages: [
+    const response = await openAIClient.getChatCompletions(
+      deploymentName,
+      [
         { role: 'system', content: systemMessage },
         { role: 'user', content: userPrompt }
       ],
-      maxTokens: 600,
-      temperature: 0.7
-    });
+      {
+        maxTokens: 600,
+        temperature: 0.7
+      }
+    );
 
     const questionsText = response.choices[0].message.content;
     const questions = questionsText
