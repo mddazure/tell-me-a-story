@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Скажи мне рассказ - Изучение русского языка</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0052cc 0%, #ffffff 50%, #d52b1e 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flag {
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            margin-right: 15px;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            background: linear-gradient(to bottom, 
+                #ffffff 0%, #ffffff 33.33%, 
+                #0052cc 33.33%, #0052cc 66.66%, 
+                #d52b1e 66.66%, #d52b1e 100%);
+            vertical-align: middle;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .header h1 {
+            display: inline-block;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            vertical-align: middle;
+        }
+
+        .header p {
+            margin-top: 10px;
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .generate-btn:active {
+            transform: translateY(0);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .story-section {
+            background: #ffffff;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .story-section.show {
+            display: block;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .story-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 20px;
+            text-align: center;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 15px;
+        }
+
+        .story-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .questions-section {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .questions-section h3 {
+            color: #495057;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .question-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .question-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .question-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .questions-display {
+            margin-top: 20px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+
+        .questions-display.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .question-item {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #28a745;
+        }
+
+        .question-number {
+            font-weight: bold;
+            color: #28a745;
+            margin-bottom: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #f5c6cb;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .flag {
+                width: 45px;
+                height: 30px;
+                margin-right: 10px;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+            }
+            
+            .question-buttons {
+                flex-direction: column;
+            }
+            
+            .question-btn {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="flag"></div>
+            <h1>Скажи мне рассказ</h1>
+            <p>Изучайте русский язык через увлекательные истории</p>
+        </header>
+
+        <main class="main-content">
+            <section class="form-section">
+                <h2 style="margin-bottom: 20px; color: #495057;">Настройки рассказа</h2>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="proficiency">Уровень владения языком:</label>
+                        <select id="proficiency">
+                            <option value="A1">A1 - Начальный</option>
+                            <option value="A2">A2 - Элементарный</option>
+                            <option value="B1" selected>B1 - Средний</option>
+                            <option value="B2">B2 - Выше среднего</option>
+                            <option value="C1">C1 - Продвинутый</option>
+                            <option value="C2">C2 - Профессиональный</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="theme">Тема рассказа:</label>
+                        <select id="theme">
+                            <option value="еда" selected>Еда</option>
+                            <option value="путешествия">Путешествия</option>
+                            <option value="работа">Работа</option>
+                            <option value="семья">Семья</option>
+                            <option value="хобби">Хобби</option>
+                            <option value="природа">Природа</option>
+                            <option value="город">Город</option>
+                            <option value="спорт">Спорт</option>
+                            <option value="культура">Культура</option>
+                            <option value="технологии">Технологии</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="wordCount">Количество слов:</label>
+                        <select id="wordCount">
+                            <option value="200">200 слов</option>
+                            <option value="300">300 слов</option>
+                            <option value="500" selected>500 слов</option>
+                            <option value="700">700 слов</option>
+                            <option value="1000">1000 слов</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="generate-btn" onclick="generateStory()">
+                    Создать рассказ
+                </button>
+            </section>
+
+            <section class="story-section" id="storySection">
+                <div class="story-title" id="storyTitle"></div>
+                <div class="story-content" id="storyContent"></div>
+                
+                <div class="questions-section">
+                    <h3>Вопросы и упражнения</h3>
+                    <div class="question-buttons">
+                        <button class="question-btn" onclick="generateQuestions('comprehension')">
+                            Вопросы на понимание
+                        </button>
+                        <button class="question-btn" onclick="generateQuestions('grammar')">
+                            Грамматические вопросы
+                        </button>
+                    </div>
+                    <div class="questions-display" id="questionsDisplay"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script-russian.js"></script>
+</body>
+</html>
