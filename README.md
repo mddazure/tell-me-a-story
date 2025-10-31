@@ -164,6 +164,7 @@ git clone https://github.com/mddazure/tell-me-a-story.git
 cd tell-me-a-story
 
 # Multi-language version
+cd app
 npm install
 cp .env.example .env
 # Edit .env with your Azure OpenAI credentials
@@ -205,8 +206,8 @@ azd up  # Creates new App Service Plan, OpenAI service, etc.
 
 #### Use Existing Resources
 ```bash
-# Edit infra/main.parameters.existing.json with your resource names
-azd deploy --parameters-file infra/main.parameters.existing.json
+# Edit app/infra/main.parameters.existing.json with your resource names
+azd deploy --parameters-file app/infra/main.parameters.existing.json
 ```
 
 **Supported Existing Resources:**
@@ -287,36 +288,39 @@ az containerapp logs show --name app-name --resource-group rg-name
 
 ```
 tell-me-a-story/
-├── 📁 src/                          # Multi-language version
-│   ├── 📄 server.js                 # Express server
-│   └── 📁 public/                   # Frontend assets
-│       ├── 📄 index.html           # Main UI
-│       ├── 📄 script.js            # JavaScript logic
-│       └── 🎨 styles.css           # Styling
-├── 📁 russian-version/              # Russian-only version  
-│   ├── 📄 package.json             # Russian app dependencies
-│   ├── 🐳 Dockerfile               # Russian container build
-│   └── 📁 src/                     # Russian app source
-│       ├── 📄 server.js            # Russian-specific server
-│       └── 📁 public/              # Russian frontend
-├── 📁 infra/                        # Azure infrastructure
-│   ├── 📄 main.bicep               # Infrastructure template
-│   ├── 📄 main.parameters.json     # New resources config
-│   └── 📄 main.parameters.existing.json # Existing resources config
-├── 🐳 Dockerfile                   # Multi-language container
-├── 🐳 docker-compose.yml           # Container orchestration
+├── � README.md                     # This documentation
 ├── ⚙️ azure.yaml                   # Azure Developer CLI config
-└── 📚 Documentation files
-    ├── 📖 DEPLOYMENT.md             # Deployment guide
-    ├── 🐳 DOCKER.md                 # Docker guide  
-    └── 📋 DOCKER-HUB-README.md     # Docker Hub documentation
+└── �📁 app/                          # Application code and resources
+    ├── 📁 src/                      # Multi-language version
+    │   ├── 📄 server.js             # Express server
+    │   └── 📁 public/               # Frontend assets
+    │       ├── 📄 index.html       # Main UI
+    │       ├── 📄 script.js        # JavaScript logic
+    │       └── 🎨 styles.css       # Styling
+    ├── 📁 russian-version/          # Russian-only version  
+    │   ├── 📄 package.json         # Russian app dependencies
+    │   ├── 🐳 Dockerfile           # Russian container build
+    │   └── 📁 src/                 # Russian app source
+    │       ├── 📄 server.js        # Russian-specific server
+    │       └── 📁 public/          # Russian frontend
+    ├── 📁 infra/                    # Azure infrastructure
+    │   ├── 📄 main.bicep           # Infrastructure template
+    │   ├── 📄 main.parameters.json # New resources config
+    │   └── 📄 main.parameters.existing.json # Existing resources config
+    ├── 🐳 Dockerfile               # Multi-language container
+    ├── 🐳 docker-compose.yml       # Container orchestration
+    ├── 📄 package.json             # Main app dependencies
+    └── 📚 Documentation files
+        ├── 📖 DEPLOYMENT.md         # Deployment guide
+        ├── 🐳 DOCKER.md             # Docker guide  
+        └── 📋 DOCKER-HUB-README.md # Docker Hub documentation
 ```
 
 ## 📚 Documentation
 
-- **[📖 Deployment Guide](DEPLOYMENT.md)** - Complete Azure deployment instructions
-- **[🐳 Docker Guide](DOCKER.md)** - Container usage and best practices  
-- **[🇷🇺 Russian Version](russian-version/README.md)** - Russian-only app documentation
+- **[📖 Deployment Guide](app/DEPLOYMENT.md)** - Complete Azure deployment instructions
+- **[🐳 Docker Guide](app/DOCKER.md)** - Container usage and best practices  
+- **[🇷🇺 Russian Version](app/russian-version/README.md)** - Russian-only app documentation
 - **[📦 Docker Hub - Multi-Language](https://hub.docker.com/r/madedroo/foreign-language-stories)**
 - **[📦 Docker Hub - Russian Only](https://hub.docker.com/r/madedroo/russian-story-generator)**
 

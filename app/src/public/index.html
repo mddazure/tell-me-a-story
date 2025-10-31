@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foreign Language Story Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌍 Foreign Language Story Generator</h1>
+            <p>Generate engaging stories in foreign languages and test your comprehension!</p>
+        </header>
+
+        <main>
+            <!-- Story Generation Form -->
+            <section class="form-section">
+                <h2>📚 Generate a Story</h2>
+                <form id="storyForm">
+                    <div class="form-group">
+                        <label for="language">Language:</label>
+                        <select id="language" required>
+                            <option value="">Select a language...</option>
+                            <option value="Spanish">Spanish</option>
+                            <option value="French">French</option>
+                            <option value="German">German</option>
+                            <option value="Italian">Italian</option>
+                            <option value="Portuguese">Portuguese</option>
+                            <option value="Dutch">Dutch</option>
+                            <option value="Russian" selected>Russian</option>
+                            <option value="Japanese">Japanese</option>
+                            <option value="Korean">Korean</option>
+                            <option value="Chinese">Chinese (Mandarin)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="proficiency">Proficiency Level:</label>
+                        <select id="proficiency" required>
+                            <option value="">Select level...</option>
+                            <option value="A1">A1 - Beginner</option>
+                            <option value="A2">A2 - Elementary</option>
+                            <option value="B1" selected>B1 - Intermediate</option>
+                            <option value="B2">B2 - Upper Intermediate</option>
+                            <option value="C1">C1 - Advanced</option>
+                            <option value="C2">C2 - Mastery</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="theme">Story Theme:</label>
+                        <select id="theme" required>
+                            <option value="">Select a theme...</option>
+                            <option value="Daily Life">📅 Daily Life - Everyday situations like shopping, cooking, and routines</option>
+                            <option value="Travel">✈️ Travel - Tourism vocabulary for hotels, restaurants, and sightseeing</option>
+                            <option value="Food" selected>🍽️ Food - Cuisine vocabulary and cultural eating customs</option>
+                            <option value="Family">👨‍👩‍👧‍👦 Family - Relationships, family members, and personal life</option>
+                            <option value="Work">💼 Work - Business vocabulary and professional communication</option>
+                            <option value="Culture">🎨 Culture - Arts, literature, music, and traditions</option>
+                            <option value="History">🏛️ History - Historical content for language learning</option>
+                            <option value="Science & Technology">🔬 Science & Technology - Technical vocabulary for academic contexts</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wordCount">Word Count: <span id="wordCountValue">500</span></label>
+                        <input type="range" id="wordCount" min="100" max="1000" value="500" step="50">
+                        <div class="range-labels">
+                            <span>100</span>
+                            <span>1000</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="generateBtn">
+                        <span class="btn-text">Generate Story</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Story Display -->
+            <section id="storySection" class="story-section" style="display: none;">
+                <h2>📖 <span id="storyTitle">Your Story</span></h2>
+                <div id="storyContent" class="story-content"></div>
+                
+                <div class="button-group">
+                    <button id="comprehensionBtn" class="question-btn">
+                        <span class="btn-text">🧠 Test Comprehension</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                    <button id="grammarBtn" class="question-btn">
+                        <span class="btn-text">📝 Test Grammar</span>
+                        <div class="spinner" style="display: none;"></div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Questions Display -->
+            <section id="questionsSection" class="questions-section" style="display: none;">
+                <h2 id="questionsTitle">❓ Questions</h2>
+                <div id="questionsContent"></div>
+                <div class="button-group">
+                    <button id="checkAnswersBtn" class="check-btn">Check Answers</button>
+                    <button id="newQuizBtn" class="secondary-btn" style="display: none;">Try Another Quiz</button>
+                </div>
+                <div id="resultsContent" class="results" style="display: none;"></div>
+            </section>
+        </main>
+
+        <!-- Error Display -->
+        <div id="errorMessage" class="error-message" style="display: none;"></div>
+
+        <!-- Loading Overlay -->
+        <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+            <div class="loading-content">
+                <div class="spinner large"></div>
+                <p>Generating your content...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

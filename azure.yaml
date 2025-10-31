@@ -6,12 +6,12 @@ metadata:
 # Infrastructure configuration
 infra:
   provider: bicep
-  path: infra
+  path: app/infra
 
 # Services configuration
 services:
   web:
-    project: .
+    project: app
     language: js
     host: appservice
     hooks:

@@ -1,0 +1,20 @@
+# Azure Developer CLI configuration
+name: foreign-language-stories
+metadata:
+  template: foreign-language-stories@0.0.1-beta
+
+# Infrastructure configuration
+infra:
+  provider: bicep
+  path: app/infra
+
+# Services configuration
+services:
+  web:
+    project: app
+    language: js
+    host: appservice
+    hooks:
+      prepackage:
+        shell: npm install --production
+        continueOnError: false
