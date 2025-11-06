@@ -111,13 +111,42 @@ class RussianStoryGenerator {
         
         let html = `<h4 style="color: #495057; margin-bottom: 15px;">${typeTitle}</h4>`;
         
-        questions.forEach((question, index) => {
-            html += `
-                <div class="question-item">
-                    <div class="question-number">Вопрос ${index + 1}:</div>
-                    <div>${question}</div>
-                </div>
-            `;
+        questions.forEach((questionObj, index) => {
+            // Handle both old format (string) and new format (object with options)
+            if (typeof questionObj === 'string') {
+                // Old format - simple question
+                html += `
+                    <div class="question-item">
+                        <div class="question-number">Вопрос ${index + 1}:</div>
+                        <div>${questionObj}</div>
+                    </div>
+                `;
+            } else if (questionObj.type === 'multiple-choice' && questionObj.options) {
+                // New format - multiple choice
+                html += `
+                    <div class="question-item multiple-choice">
+                        <div class="question-number">Вопрос ${index + 1}:</div>
+                        <div class="question-text">${questionObj.question}</div>
+                        <div class="options">
+                `;
+                
+                questionObj.options.forEach(option => {
+                    html += `<div class="option">${option}</div>`;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Fallback for other formats
+                html += `
+                    <div class="question-item">
+                        <div class="question-number">Вопрос ${index + 1}:</div>
+                        <div>${questionObj.question || questionObj}</div>
+                    </div>
+                `;
+            }
         });
         
         questionsDisplay.innerHTML = html;
