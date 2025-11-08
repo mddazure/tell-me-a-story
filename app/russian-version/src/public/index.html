@@ -282,6 +282,112 @@
             color: #007bff;
         }
 
+        .quiz-controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .check-btn, .new-quiz-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+
+        .check-btn:hover, .new-quiz-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+        }
+
+        .new-quiz-btn {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+        }
+
+        .new-quiz-btn:hover {
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+        }
+
+        .results-display {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .score.excellent { color: #28a745; }
+        .score.good { color: #17a2b8; }
+        .score.fair { color: #ffc107; }
+        .score.poor { color: #dc3545; }
+
+        .question {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+
+        .question h3 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .options {
+            margin-left: 0;
+        }
+
+        .option {
+            display: block;
+            margin: 8px 0;
+            padding: 10px 15px;
+            background: #ffffff;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            border-color: #007bff;
+        }
+
+        .option input[type="radio"] {
+            margin-right: 10px;
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .option.correct-answer {
+            background: #cce7ff;
+            border-color: #007bff;
+            color: #004085;
+        }
+
         .loading {
             text-align: center;
             padding: 40px;
@@ -348,6 +454,24 @@
             
             .question-btn {
                 min-width: 100%;
+            }
+
+            .quiz-controls {
+                flex-direction: column;
+            }
+
+            .check-btn, .new-quiz-btn {
+                margin: 5px 0;
+                width: 100%;
+            }
+
+            .question {
+                padding: 10px;
+            }
+
+            .option {
+                padding: 8px 12px;
+                font-size: 0.9em;
             }
         }
     </style>
@@ -427,6 +551,15 @@
                         </button>
                     </div>
                     <div class="questions-display" id="questionsDisplay"></div>
+                    <div class="quiz-controls">
+                        <button class="check-btn" id="checkAnswersBtn" style="display: none;">
+                            Проверить ответы
+                        </button>
+                        <button class="new-quiz-btn" id="newQuizBtn" style="display: none;">
+                            Новый тест
+                        </button>
+                    </div>
+                    <div class="results-display" id="resultsDisplay" style="display: none;"></div>
                 </div>
             </section>
         </main>

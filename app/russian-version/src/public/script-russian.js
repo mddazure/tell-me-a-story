@@ -2,7 +2,22 @@ class RussianStoryGenerator {
     constructor() {
         this.currentStory = '';
         this.currentTitle = '';
+        this.currentQuestions = null;
+        this.currentQuestionType = null;
         this.isLoading = false;
+        this.initializeEventListeners();
+    }
+
+    initializeEventListeners() {
+        // Check answers button
+        document.getElementById('checkAnswersBtn').addEventListener('click', () => {
+            this.checkAnswers();
+        });
+
+        // New quiz button
+        document.getElementById('newQuizBtn').addEventListener('click', () => {
+            this.showNewQuizOptions();
+        });
     }
 
     async generateStory() {
@@ -93,6 +108,8 @@ class RussianStoryGenerator {
             }
 
             const data = await response.json();
+            this.currentQuestions = data.questions;
+            this.currentQuestionType = type;
             this.displayQuestions(data.questions, type);
 
         } catch (error) {
@@ -112,8 +129,28 @@ class RussianStoryGenerator {
         let html = `<h4 style="color: #495057; margin-bottom: 15px;">${typeTitle}</h4>`;
         
         questions.forEach((questionObj, index) => {
-            // Handle both old format (string) and new format (object with options)
-            if (typeof questionObj === 'string') {
+            if (questionObj.options && typeof questionObj.options === 'object') {
+                // New JSON format with options object
+                html += `
+                    <div class="question">
+                        <h3>${index + 1}. ${questionObj.question}</h3>
+                        <div class="options">
+                `;
+                
+                Object.entries(questionObj.options).forEach(([key, value]) => {
+                    html += `
+                        <label class="option">
+                            <input type="radio" name="question${index}" value="${key}">
+                            <span><strong>${key}:</strong> ${value}</span>
+                        </label>
+                    `;
+                });
+                
+                html += `
+                        </div>
+                    </div>
+                `;
+            } else if (typeof questionObj === 'string') {
                 // Old format - simple question
                 html += `
                     <div class="question-item">
@@ -121,8 +158,8 @@ class RussianStoryGenerator {
                         <div>${questionObj}</div>
                     </div>
                 `;
-            } else if (questionObj.type === 'multiple-choice' && questionObj.options) {
-                // New format - multiple choice
+            } else if (questionObj.type === 'multiple-choice' && Array.isArray(questionObj.options)) {
+                // Old text format with array options
                 html += `
                     <div class="question-item multiple-choice">
                         <div class="question-number">Вопрос ${index + 1}:</div>
@@ -150,6 +187,100 @@ class RussianStoryGenerator {
         });
         
         questionsDisplay.innerHTML = html;
+        
+        // Show/hide control buttons
+        document.getElementById('checkAnswersBtn').style.display = 'inline-block';
+        document.getElementById('newQuizBtn').style.display = 'none';
+        document.getElementById('resultsDisplay').style.display = 'none';
+    }
+
+    checkAnswers() {
+        if (!this.currentQuestions) return;
+        
+        let correctCount = 0;
+        const questions = document.querySelectorAll('.question');
+        
+        questions.forEach((questionDiv, index) => {
+            const selectedOption = questionDiv.querySelector('input[type="radio"]:checked');
+            const correctAnswer = this.currentQuestions[index].correct;
+            const options = questionDiv.querySelectorAll('.option');
+            
+            // Reset option styles
+            options.forEach(option => {
+                option.classList.remove('correct', 'incorrect', 'correct-answer');
+            });
+            
+            if (selectedOption) {
+                const selectedValue = selectedOption.value;
+                const selectedOptionElement = selectedOption.closest('.option');
+                
+                if (selectedValue === correctAnswer) {
+                    selectedOptionElement.classList.add('correct');
+                    correctCount++;
+                } else {
+                    selectedOptionElement.classList.add('incorrect');
+                    // Highlight the correct answer
+                    options.forEach(option => {
+                        const input = option.querySelector('input[type="radio"]');
+                        if (input && input.value === correctAnswer) {
+                            option.classList.add('correct-answer');
+                        }
+                    });
+                }
+            } else {
+                // No answer selected, just highlight the correct answer
+                options.forEach(option => {
+                    const input = option.querySelector('input[type="radio"]');
+                    if (input && input.value === correctAnswer) {
+                        option.classList.add('correct-answer');
+                    }
+                });
+            }
+        });
+        
+        this.displayResults(correctCount, this.currentQuestions.length);
+    }
+
+    displayResults(correctCount, totalCount) {
+        const resultsDisplay = document.getElementById('resultsDisplay');
+        const percentage = Math.round((correctCount / totalCount) * 100);
+        
+        let scoreClass = 'poor';
+        let message = 'Продолжайте изучение!';
+        
+        if (percentage >= 90) {
+            scoreClass = 'excellent';
+            message = 'Отличная работа! 🎉';
+        } else if (percentage >= 70) {
+            scoreClass = 'good';
+            message = 'Хорошо сделано! 👏';
+        } else if (percentage >= 50) {
+            scoreClass = 'fair';
+            message = 'Неплохая попытка! 👍';
+        }
+        
+        resultsDisplay.innerHTML = `
+            <div class="score ${scoreClass}">
+                ${correctCount}/${totalCount} (${percentage}%)
+            </div>
+            <p>${message}</p>
+        `;
+        
+        resultsDisplay.style.display = 'block';
+        document.getElementById('checkAnswersBtn').style.display = 'none';
+        document.getElementById('newQuizBtn').style.display = 'inline-block';
+    }
+
+    showNewQuizOptions() {
+        // Reset questions display
+        document.getElementById('questionsDisplay').innerHTML = '';
+        document.getElementById('resultsDisplay').style.display = 'none';
+        document.getElementById('checkAnswersBtn').style.display = 'none';
+        document.getElementById('newQuizBtn').style.display = 'none';
+        
+        // Reset current questions
+        this.currentQuestions = null;
+        this.currentQuestionType = null;
     }
 
     showError(message) {

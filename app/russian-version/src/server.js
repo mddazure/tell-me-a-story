@@ -187,7 +187,7 @@ app.post('/api/generate-questions', async (req, res) => {
     let userPrompt = '';
 
     if (type === 'comprehension') {
-      systemMessage = `Вы преподаватель русского языка. Создайте 5 вопросов на понимание прочитанного текста на русском языке с вариантами ответов. 
+      systemMessage = `Вы преподаватель русского языка. Создайте 5 вопросов на понимание прочитанного текста на русском языке с вариантами ответов в формате JSON. 
 
 ${russianInstructions}
 
@@ -198,16 +198,25 @@ ${story}
 
 ${russianInstructions}
 
-Формат для каждого вопроса:
-1. [Вопрос]
-   А) [Вариант ответа]
-   Б) [Вариант ответа]
-   В) [Вариант ответа]
-   Г) [Вариант ответа]
+Формат JSON:
+{
+  "questions": [
+    {
+      "question": "[Вопрос на русском языке]",
+      "options": {
+        "А": "[Вариант ответа]",
+        "Б": "[Вариант ответа]",
+        "В": "[Вариант ответа]",
+        "Г": "[Вариант ответа]"
+      },
+      "correct": "А"
+    }
+  ]
+}
 
-Создайте только один правильный ответ для каждого вопроса, остальные должны быть правдоподобными, но неверными.`;
+Создайте только один правильный ответ для каждого вопроса, остальные должны быть правдоподобными, но неверными. Ответьте ТОЛЬКО JSON без дополнительного текста.`;
     } else {
-      systemMessage = `Вы преподаватель русской грамматики. Создайте 5 грамматических вопросов на основе текста на русском языке с вариантами ответов. 
+      systemMessage = `Вы преподаватель русской грамматики. Создайте 5 грамматических вопросов на основе текста на русском языке с вариантами ответов в формате JSON. 
 
 ${russianInstructions}
 
@@ -218,14 +227,23 @@ ${story}
 
 ${russianInstructions}
 
-Формат для каждого вопроса:
-1. [Грамматический вопрос]
-   А) [Вариант ответа]
-   Б) [Вариант ответа]
-   В) [Вариант ответа]
-   Г) [Вариант ответа]
+Формат JSON:
+{
+  "questions": [
+    {
+      "question": "[Грамматический вопрос на русском языке]",
+      "options": {
+        "А": "[Вариант ответа]",
+        "Б": "[Вариант ответа]",
+        "В": "[Вариант ответа]",
+        "Г": "[Вариант ответа]"
+      },
+      "correct": "А"
+    }
+  ]
+}
 
-Создайте только один правильный ответ для каждого вопроса, остальные должны быть грамматически правдоподобными, но неверными.`;
+Создайте только один правильный ответ для каждого вопроса, остальные должны быть грамматически правдоподобными, но неверными. Ответьте ТОЛЬКО JSON без дополнительного текста.`;
     }
 
     const response = await openAIClient.getChatCompletions(
@@ -242,7 +260,18 @@ ${russianInstructions}
 
     const questionsText = response.choices[0].message.content;
     
-    // Parse questions with multiple choice options
+    try {
+      // Try to parse as JSON first
+      const jsonResponse = JSON.parse(questionsText);
+      if (jsonResponse.questions && Array.isArray(jsonResponse.questions)) {
+        res.json({ questions: jsonResponse.questions });
+        return;
+      }
+    } catch (e) {
+      console.log('Failed to parse as JSON, falling back to text parsing');
+    }
+    
+    // Fallback: Parse questions with multiple choice options (old format)
     const questionBlocks = questionsText
       .split(/\d+\./)
       .slice(1)
@@ -263,9 +292,18 @@ ${russianInstructions}
       
       // If we have options, format as multiple choice
       if (options.length >= 4) {
+        const optionsObj = {};
+        options.forEach(opt => {
+          const match = opt.match(/^([АБВГабвг])\)\s*(.+)$/);
+          if (match) {
+            optionsObj[match[1].toUpperCase()] = match[2];
+          }
+        });
+        
         return {
           question: question,
-          options: options,
+          options: optionsObj,
+          correct: Object.keys(optionsObj)[0], // Default to first option, AI should specify correct answer
           type: 'multiple-choice'
         };
       } else {
