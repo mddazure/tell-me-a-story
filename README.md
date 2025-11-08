@@ -65,16 +65,160 @@ docker run -d \
 - 📱 **Responsive Design**: Works perfectly on desktop and mobile
 - 🔒 **Secure**: Production-ready with security best practices
 
-## 🏗️ Architecture & Deployment
+## 🏗️ Architecture & How It Works
+
+### **System Overview**
+
+The Foreign Language Story Generator is a **full-stack web application** that combines **Azure OpenAI's GPT models** with a **Node.js backend** and **responsive frontend** to create an interactive language learning experience.
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────────┐
+│   Web Browser   │───▶│  Node.js Server  │───▶│   Azure OpenAI      │
+│  (Frontend UI)  │◀───│   (Backend API)  │◀───│   (GPT-4/GPT-4o)   │
+└─────────────────┘    └──────────────────┘    └─────────────────────┘
+         │                       │                         │
+         │              ┌────────▼────────┐               │
+         │              │  Static Assets  │               │
+         │              │ (HTML/CSS/JS)   │               │
+         └──────────────▶└─────────────────┘               │
+                                                           │
+                         ┌─────────────────────────────────┘
+                         ▼
+                 ┌───────────────────┐
+                 │ Story Generation  │
+                 │ Question Creation │  
+                 │ Answer Validation │
+                 └───────────────────┘
+```
+
+### **Application Flow**
+
+#### **1. Story Generation Process**
+```
+User Input → Backend Processing → AI Generation → Response Formatting → Frontend Display
+```
+
+1. **User Selection**: User chooses language, proficiency level (A1-C2), theme, and word count
+2. **API Request**: Frontend sends POST request to `/api/generate-story` with parameters
+3. **Prompt Engineering**: Backend creates specialized prompts in target language
+4. **Azure OpenAI Call**: Server sends structured prompt to GPT-4/GPT-4o
+5. **Content Processing**: AI generates story with proper grammar and vocabulary level
+6. **Title Generation**: Separate AI call creates appropriate title in target language
+7. **Response Formatting**: Backend returns JSON with story, title, and metadata
+8. **Frontend Rendering**: Story displayed with proper typography and formatting
+
+#### **2. Interactive Question System**
+```
+Story Content → Question Generation → User Interaction → Answer Validation → Feedback
+```
+
+**Comprehension Questions:**
+- AI analyzes story content for plot, characters, and key details
+- Generates 5 multiple-choice questions testing reading comprehension
+- Each question has 4 options (A/B/C/D or А/Б/В/Г for Russian)
+- Questions focus on story understanding and inference
+
+**Grammar Questions:**
+- AI examines language structures used in the story
+- Creates questions about verb tenses, sentence structure, vocabulary usage
+- Targets specific grammar points relevant to the proficiency level
+- Tests practical application of grammar rules in context
+
+#### **3. Answer Checking & Feedback**
+```
+User Selections → Validation Logic → Visual Feedback → Score Calculation → Results Display
+```
+
+- **Real-time Selection**: Radio buttons allow single answer selection per question
+- **Answer Validation**: JavaScript compares user selections with correct answers from AI
+- **Color-coded Feedback**: 
+  - 🟢 **Green**: Correct answer selected
+  - 🔴 **Red**: Incorrect answer selected
+  - 🔵 **Blue**: Correct answer highlighted when user was wrong
+- **Score Calculation**: Percentage score with encouraging messages
+- **Progress Tracking**: Visual feedback helps users learn from mistakes
 
 ### **Technology Stack**
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript (Single-Page App)
-- **Backend**: Node.js + Express.js
-- **AI Service**: Azure OpenAI GPT-4/GPT-4o
-- **Container**: Docker with Alpine Linux
-- **Cloud**: Azure App Service, Azure Container Instances/Apps
-- **Infrastructure**: Bicep (Infrastructure as Code)
-- **Authentication**: Azure Managed Identity + API Key fallback
+
+#### **Frontend (Client-Side)**
+- **HTML5**: Semantic markup with accessibility features
+- **CSS3**: Responsive design with flexbox/grid, custom animations
+- **Vanilla JavaScript**: 
+  - DOM manipulation and event handling
+  - Fetch API for backend communication
+  - Form validation and user interaction
+  - Answer checking and visual feedback logic
+
+#### **Backend (Server-Side)**
+- **Node.js 18+**: Modern JavaScript runtime with async/await
+- **Express.js**: Web framework for API endpoints and static file serving
+- **Azure OpenAI SDK**: Official client library for GPT integration
+- **Environment Configuration**: Secure credential management
+- **Error Handling**: Comprehensive logging and graceful error responses
+
+#### **AI Integration**
+- **Azure OpenAI Service**: Enterprise-grade AI platform
+- **GPT-4/GPT-4o Models**: Advanced language understanding and generation
+- **Structured Prompting**: Carefully crafted prompts for consistent output
+- **JSON Response Parsing**: Reliable data extraction and validation
+- **Multi-language Support**: Native handling of 10+ languages
+
+#### **Security & Production Features**
+- **Content Security Policy (CSP)**: Prevents XSS attacks
+- **Helmet.js**: Security headers and best practices
+- **Azure Managed Identity**: Secure cloud authentication
+- **API Key Fallback**: Local development and backup authentication
+- **Input Validation**: Sanitization of user inputs
+- **Error Boundaries**: Graceful handling of failures
+
+### **Data Flow Architecture**
+
+#### **Request-Response Cycle**
+```javascript
+// 1. User interaction triggers request
+const storyData = {
+  language: 'Russian',
+  proficiency: 'B1',  
+  theme: 'семья',
+  wordCount: 500
+};
+
+// 2. Frontend sends API request
+const response = await fetch('/api/generate-story', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(storyData)
+});
+
+// 3. Backend processes and calls Azure OpenAI
+const prompt = `Create a ${proficiency} level ${language} story about ${theme}...`;
+const aiResponse = await openAIClient.getChatCompletions(deploymentName, messages);
+
+// 4. Response returned to frontend
+const result = {
+  story: "Generated story content...",
+  title: "Story title",
+  questions: [/* question objects */]
+};
+```
+
+#### **State Management**
+- **Frontend State**: JavaScript classes manage current story, questions, and user selections
+- **Session Persistence**: Stories and questions remain available during browser session
+- **No Database**: Stateless architecture - all data is ephemeral and AI-generated
+
+### **Multi-Version Architecture**
+
+#### **Multi-Language Version**
+- **Universal Backend**: Handles all supported languages dynamically
+- **Language Detection**: Automatic prompt generation based on selected language
+- **Unified Interface**: English UI with language-specific content generation
+
+#### **Russian-Only Version**
+- **Specialized Backend**: Optimized specifically for Russian language processing
+- **Immersive Interface**: Complete Russian UI for full language immersion
+- **Cultural Customization**: Russia-specific themes and cultural context
+- **Cyrillic Optimization**: Proper handling of Russian typography and formatting
 
 ### **Deployment Options**
 1. **🐳 Docker Containers** - Ready-to-run images on Docker Hub
@@ -82,6 +226,12 @@ docker run -d \
 3. **📦 Azure Container Instances** - Serverless containers
 4. **⚡ Azure Container Apps** - Advanced scaling and management
 5. **💻 Local Development** - Node.js development server
+
+### **Infrastructure as Code**
+- **Bicep Templates**: Declarative Azure resource definitions
+- **Azure Developer CLI**: Streamlined deployment workflow
+- **Parameter Files**: Environment-specific configurations
+- **Resource Management**: Automated provisioning and updates
 
 ## 🚀 Deployment Methods
 
