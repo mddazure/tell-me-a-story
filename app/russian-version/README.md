@@ -17,17 +17,18 @@ A specialized Russian-only version of the Foreign Language Stories application t
 
 ### 🚀 Quick Start
 
+> **Authentication**: This application uses **Azure System Assigned Managed Identity** for secure, keyless authentication. When deploying to Azure, enable managed identity and grant the "Cognitive Services OpenAI User" role.
+
 #### Using Docker
 ```bash
 # Build the image
 docker build -t russian-story-generator .
 
-# Run with environment variables
+# Run with environment variables (no API key needed)
 docker run -d \
   --name skazhi-mne-rasskaz \
   -p 3002:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
   russian-story-generator
 ```
@@ -57,8 +58,13 @@ npm start
 | Variable | Description |
 |----------|-------------|
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI service endpoint |
-| `AZURE_OPENAI_API_KEY` | API key for authentication |
 | `AZURE_OPENAI_DEPLOYMENT_NAME` | Model deployment name (e.g., gpt-4o) |
+
+#### Authentication
+This application uses **Azure System Assigned Managed Identity** for secure authentication:
+- No API keys required
+- Enable System Assigned Identity on your Azure resource (App Service, Container Instance, etc.)
+- Grant "Cognitive Services OpenAI User" role to the managed identity on your Azure OpenAI resource
 
 #### Optional Variables
 | Variable | Default | Description |

@@ -13,13 +13,14 @@ Both applications are **fully functional** and deployed to Docker Hub:
 
 ##  Quick Start with Docker
 
+> **Note**: These applications use **Azure Managed Identity** for authentication. When deploying to Azure App Service or Container Instances, enable System Assigned Managed Identity and grant the "Cognitive Services OpenAI User" role to your Azure OpenAI resource.
+
 ### Multi-Language Version
 ```bash
 docker run -d \
   --name foreign-language-stories \
   -p 3000:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
   madedroo/foreign-language-stories:latest
 ```
@@ -30,7 +31,6 @@ docker run -d \
   --name skazhi-mne-rasskaz \
   -p 3001:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
   madedroo/russian-story-generator:latest
 ```
@@ -166,8 +166,8 @@ User Selections → Validation Logic → Visual Feedback → Score Calculation �
 #### **Security & Production Features**
 - **Content Security Policy (CSP)**: Prevents XSS attacks
 - **Helmet.js**: Security headers and best practices
-- **Azure Managed Identity**: Secure cloud authentication
-- **API Key Fallback**: Local development and backup authentication
+- **Azure Managed Identity**: Secure cloud authentication (System Assigned)
+- **No API Keys**: Keyless authentication using Azure RBAC
 - **Input Validation**: Sanitization of user inputs
 - **Error Boundaries**: Graceful handling of failures
 
@@ -256,8 +256,8 @@ services:
     ports: ["3001:3000"]
     environment:
       - AZURE_OPENAI_ENDPOINT=https://your-openai.openai.azure.com/
-      - AZURE_OPENAI_API_KEY=your-api-key
       - AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+    # Note: Uses Azure Managed Identity for authentication
 
   # Russian-only app
   russian-stories:
@@ -265,8 +265,8 @@ services:
     ports: ["3002:3000"]
     environment:
       - AZURE_OPENAI_ENDPOINT=https://your-openai.openai.azure.com/
-      - AZURE_OPENAI_API_KEY=your-api-key
       - AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+    # Note: Uses Azure Managed Identity for authentication
 ```
 
 ### 2. ☁️ **Azure Cloud Deployment**
@@ -287,7 +287,9 @@ az container create \
   --name foreign-language-stories \
   --image madedroo/foreign-language-stories:latest \
   --environment-variables AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  --secure-environment-variables AZURE_OPENAI_API_KEY="your-api-key" \
+                          AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  --assign-identity --scope /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<openai-name> \
+  --role "Cognitive Services OpenAI User" \
   --ports 3000
 
 # Russian-only version
@@ -296,7 +298,9 @@ az container create \
   --name russian-stories \
   --image madedroo/russian-story-generator:latest \
   --environment-variables AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  --secure-environment-variables AZURE_OPENAI_API_KEY="your-api-key" \
+                          AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  --assign-identity --scope /subscriptions/<sub-id>/resourceGroups/<rg>/providers/Microsoft.CognitiveServices/accounts/<openai-name> \
+  --role "Cognitive Services OpenAI User" \
   --ports 3000
 ```
 

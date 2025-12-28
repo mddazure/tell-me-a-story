@@ -31,32 +31,22 @@ let openAIClient;
 function initializeOpenAIClient() {
   try {
     const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-    const apiKey = process.env.AZURE_OPENAI_API_KEY;
     
     if (!endpoint) {
       throw new Error('AZURE_OPENAI_ENDPOINT environment variable is required');
     }
 
-    if (apiKey) {
-      // Use API Key authentication
-      const { AzureKeyCredential } = require('@azure/core-auth');
-      openAIClient = new OpenAIClient(endpoint, new AzureKeyCredential(apiKey));
-      console.log('Azure OpenAI client initialized successfully with API key');
-    } else {
-      // Fall back to Managed Identity in production (Azure App Service)
-      const credential = process.env.AZURE_CLIENT_ID ? 
-        new ManagedIdentityCredential(process.env.AZURE_CLIENT_ID) : 
-        new DefaultAzureCredential();
-      
-      openAIClient = new OpenAIClient(endpoint, credential);
-      console.log('Azure OpenAI client initialized successfully with managed identity');
-    }
+    // Use System Assigned Managed Identity
+    const credential = new DefaultAzureCredential();
+    openAIClient = new OpenAIClient(endpoint, credential);
+    console.log('Azure OpenAI client initialized with System Assigned Managed Identity');
 
     const deploymentName = process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-4';
     console.log(`Using deployment: ${deploymentName}`);
 
   } catch (error) {
     console.error('Failed to initialize Azure OpenAI client:', error.message);
+    throw error;
   }
 }
 
@@ -214,6 +204,8 @@ ${russianInstructions}
   ]
 }
 
+ОБЯЗАТЕЛЬНО: Распределите правильные ответы случайным образом между А, Б, В, Г. НЕ делайте все правильные ответы "А". Например: первый вопрос - правильный ответ "Б", второй - "Г", третий - "А", четвёртый - "В", пятый - "Б".
+
 Создайте только один правильный ответ для каждого вопроса, остальные должны быть правдоподобными, но неверными. Ответьте ТОЛЬКО JSON без дополнительного текста.`;
     } else {
       systemMessage = `Вы преподаватель русской грамматики. Создайте 5 грамматических вопросов на основе текста на русском языке с вариантами ответов в формате JSON. 
@@ -242,6 +234,8 @@ ${russianInstructions}
     }
   ]
 }
+
+ОБЯЗАТЕЛЬНО: Распределите правильные ответы случайным образом между А, Б, В, Г. НЕ делайте все правильные ответы "А". Например: первый вопрос - правильный ответ "В", второй - "А", третий - "Г", четвёртый - "Б", пятый - "В".
 
 Создайте только один правильный ответ для каждого вопроса, остальные должны быть грамматически правдоподобными, но неверными. Ответьте ТОЛЬКО JSON без дополнительного текста.`;
     }
