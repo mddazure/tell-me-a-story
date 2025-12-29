@@ -318,16 +318,17 @@ ${russianInstructions}
 });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
+app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    service: 'Скажи мне рассказ - Russian Story Generator'
+    service: 'Скажи мне рассказ - Russian Story Generator',
+    openai_client: !!openAIClient
   });
 });
 
 // Serve the Russian-only app
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 

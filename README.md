@@ -387,7 +387,7 @@ azd deploy --parameters-file app/infra/main.parameters.existing.json
 - ✅ **Error Handling** - No information disclosure
 
 ### **Production Ready**
-- 📊 **Health Monitoring** - `/health` endpoint for load balancers
+- 📊 **Health Monitoring** - `/api/health` endpoint for load balancers
 - 🔧 **Graceful Shutdowns** - Proper process management
 - 📝 **Structured Logging** - Application insights integration
 - ⚡ **Performance Optimized** - Alpine Linux, production Node.js
@@ -420,7 +420,7 @@ azd deploy --parameters-file app/infra/main.parameters.existing.json
 docker ps
 
 # View health endpoint
-curl http://localhost:3000/health
+curl http://localhost:3000/api/health
 
 # Monitor container resources
 docker stats container_name
