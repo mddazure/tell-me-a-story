@@ -336,19 +336,22 @@ npm start
 
 ## ⚙️ Configuration
 
+### **Authentication**
+Both applications use **Azure Managed Identity** (`DefaultAzureCredential`) for secure, keyless authentication. When deploying to Azure, enable System Assigned Managed Identity and grant the "Cognitive Services OpenAI User" role.
+
 ### **Required Environment Variables**
 | Variable | Description | Example |
 |----------|-------------|---------|
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI service endpoint | `https://your-openai.openai.azure.com/` |
 | `AZURE_OPENAI_DEPLOYMENT_NAME` | Model deployment name | `gpt-4o` |
-| `AZURE_OPENAI_API_KEY` | API key (local dev) | `your-api-key-here` |
 
 ### **Optional Variables**
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `3000` | Application port |
 | `NODE_ENV` | `production` | Environment mode |
-| `AZURE_CLIENT_ID` | - | Managed Identity ID (Azure deployment) |
+| `AZURE_OPENAI_TEMPERATURE` | `0.7` / `0.8` | Story creativity (0.0-1.0). Higher = more varied stories |
+| `AZURE_CLIENT_ID` | - | User Assigned Managed Identity client ID (if not using System Assigned) |
 
 ### **Flexible Azure Infrastructure**
 The Bicep templates support both **new** and **existing** Azure resources:
@@ -372,10 +375,10 @@ azd deploy --parameters-file app/infra/main.parameters.existing.json
 
 ## 🔒 Security & Production Features
 
-### **Authentication Options**
-- 🎯 **Azure Managed Identity** (Production) - No secrets required
-- 🔑 **API Key Authentication** (Development) - For local testing
-- 🔄 **Automatic Fallback** - Seamless authentication switching
+### **Authentication**
+- 🎯 **Azure Managed Identity** - Keyless authentication using `DefaultAzureCredential`
+- 🔐 **System Assigned Identity** - Recommended for Azure App Service / Container Apps
+- 🆔 **User Assigned Identity** - Supported via `AZURE_CLIENT_ID` environment variable
 
 ### **Security Hardening**
 - ✅ **HTTPS Enforcement** - All traffic encrypted
@@ -514,24 +517,26 @@ tell-me-a-story/
 
 ### **Try Multi-Language Version:**
 ```bash
+# On Azure with Managed Identity
 docker run -p 3000:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  -e AZURE_OPENAI_TEMPERATURE="0.9" \
   madedroo/foreign-language-stories:latest
 ```
 **Access:** http://localhost:3000
 
 ### **Try Russian-Only Version:**  
 ```bash
+# On Azure with Managed Identity
 docker run -p 3001:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  -e AZURE_OPENAI_TEMPERATURE="0.9" \
   madedroo/russian-story-generator:latest
 ```
 **Access:** http://localhost:3001
 
-*Note: You'll need Azure OpenAI credentials for full functionality*
+> **Note:** These containers use Azure Managed Identity for authentication. Deploy to Azure App Service, Container Apps, or ACI with System Assigned Managed Identity enabled.
 
 **Изучайте языки через увлекательные истории! Learn languages through engaging stories!** 🌍📚✨
