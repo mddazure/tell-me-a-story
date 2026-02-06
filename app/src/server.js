@@ -49,6 +49,11 @@ function initializeOpenAIClient() {
 // Initialize the client
 initializeOpenAIClient();
 
+// Model temperature configuration (controls randomness/creativity of stories)
+// Range: 0.0 to 1.0 - Higher values = more creative/varied, Lower values = more focused/consistent
+const storyTemperature = parseFloat(process.env.AZURE_OPENAI_TEMPERATURE) || 0.7;
+console.log(`Using story temperature: ${storyTemperature}`);
+
 // API Routes
 app.post('/api/generate-story', async (req, res) => {
   try {
@@ -94,7 +99,7 @@ app.post('/api/generate-story', async (req, res) => {
       ],
       {
         maxTokens: Math.min(wordCount * 2, 2000),
-        temperature: 0.7,
+        temperature: storyTemperature,
         topP: 0.9
       }
     );
