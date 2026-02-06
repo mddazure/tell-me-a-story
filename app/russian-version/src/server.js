@@ -53,6 +53,11 @@ function initializeOpenAIClient() {
 // Initialize the OpenAI client
 initializeOpenAIClient();
 
+// Model temperature configuration (controls randomness/creativity of stories)
+// Range: 0.0 to 1.0 - Higher values = more creative/varied, Lower values = more focused/consistent
+const storyTemperature = parseFloat(process.env.AZURE_OPENAI_TEMPERATURE) || 0.8;
+console.log(`Using story temperature: ${storyTemperature}`);
+
 // Enhanced Russian language instructions with explicit character requirements
 const russianInstructions = `
 КРИТИЧЕСКИ ВАЖНО для форматирования русского текста:
@@ -116,7 +121,7 @@ ${russianInstructions}
       ],
       {
         maxTokens: Math.max(800, Math.floor(wordCount * 1.5)),
-        temperature: 0.8
+        temperature: storyTemperature
       }
     );
 

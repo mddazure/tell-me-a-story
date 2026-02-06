@@ -15,12 +15,14 @@ A specialized Russian-only language learning application that generates engaging
 
 ## 🚀 Quick Start
 
+> **Note**: This container uses **Azure Managed Identity** for authentication. It is designed to run on Azure services (Container Apps, App Service, ACI) with a System Assigned Managed Identity that has access to your Azure OpenAI resource.
+
 ```bash
+# On Azure with Managed Identity
 docker run -d \
   --name skazhi-mne-rasskaz \
   -p 3002:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  -e AZURE_OPENAI_API_KEY="your-api-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
   madedroo/russian-story-generator:latest
 ```
@@ -35,7 +37,8 @@ Then open http://localhost:3002
 |----------|-------------|---------|
 | `AZURE_OPENAI_ENDPOINT` | Azure OpenAI service endpoint | `https://your-openai.openai.azure.com/` |
 | `AZURE_OPENAI_DEPLOYMENT_NAME` | Model deployment name | `gpt-4o` |
-| `AZURE_OPENAI_API_KEY` | API key for authentication | `your-api-key-here` |
+
+> **Authentication**: Uses `DefaultAzureCredential` (Managed Identity). No API key required.
 
 ### Optional Variables
 
@@ -43,9 +46,12 @@ Then open http://localhost:3002
 |----------|---------|-------------|
 | `PORT` | `3000` | Application port |
 | `NODE_ENV` | `production` | Environment mode |
-| `AZURE_CLIENT_ID` | - | Managed Identity ID (Azure deployment) |
+| `AZURE_OPENAI_TEMPERATURE` | `0.8` | Story creativity (0.0-1.0). Higher = more varied stories |
+| `AZURE_CLIENT_ID` | - | User Assigned Managed Identity client ID (if not using System Assigned) |
 
 ## 🐳 Docker Compose
+
+> **Note**: For local development without Managed Identity, you'll need to use Azure CLI login or other `DefaultAzureCredential` supported methods.
 
 ```yaml
 version: '3.8'
@@ -57,8 +63,8 @@ services:
       - "3002:3000"
     environment:
       - AZURE_OPENAI_ENDPOINT=https://your-openai.openai.azure.com/
-      - AZURE_OPENAI_API_KEY=your-api-key
       - AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o
+      - AZURE_OPENAI_TEMPERATURE=0.9  # Optional: adjust story creativity
     restart: unless-stopped
 ```
 
@@ -149,32 +155,42 @@ Optimized for Azure deployment:
 ## 💡 Usage Examples
 
 ### Local Development
+
+> **Note**: Local development requires `DefaultAzureCredential` authentication (Azure CLI login, environment credentials, etc.)
+
 ```bash
 # With environment file
 docker run --env-file .env -p 3002:3000 madedroo/russian-story-generator
 
-# With individual variables
+# With individual variables (Managed Identity on Azure)
 docker run \
   -e AZURE_OPENAI_ENDPOINT="https://swedencentral.api.cognitive.microsoft.com/" \
-  -e AZURE_OPENAI_API_KEY="your-key" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
+  -e AZURE_OPENAI_TEMPERATURE="0.9" \
   -p 3002:3000 \
   madedroo/russian-story-generator
 ```
 
 ### Production Deployment
 ```bash
-# Azure Container Instances
+# Azure Container Instances with System Assigned Managed Identity
 az container create \
   --resource-group myResourceGroup \
   --name russian-stories \
   --image madedroo/russian-story-generator:latest \
-  --environment-variables AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
-  --secure-environment-variables AZURE_OPENAI_API_KEY="your-api-key" \
+  --assign-identity \
+  --environment-variables \
+    AZURE_OPENAI_ENDPOINT="https://your-openai.openai.azure.com/" \
+    AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
   --ports 3000
+
+# Don't forget to grant the Managed Identity access to your Azure OpenAI resource:
+# az role assignment create --assignee <identity-principal-id> \
+#   --role "Cognitive Services OpenAI User" \
+#   --scope <openai-resource-id>
 ```
 
-### Kubernetes Deployment
+### Kubernetes Deployment (AKS with Workload Identity)
 ```yaml
 apiVersion: apps/v1
 kind: Deployment
@@ -189,7 +205,9 @@ spec:
     metadata:
       labels:
         app: russian-stories
+        azure.workload.identity/use: "true"  # Enable Workload Identity
     spec:
+      serviceAccountName: russian-stories-sa  # Service account with federated identity
       containers:
       - name: app
         image: madedroo/russian-story-generator:latest
@@ -200,11 +218,8 @@ spec:
           value: "https://your-openai.openai.azure.com/"
         - name: AZURE_OPENAI_DEPLOYMENT_NAME
           value: "gpt-4o"
-        - name: AZURE_OPENAI_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: openai-secret
-              key: api-key
+        - name: AZURE_OPENAI_TEMPERATURE
+          value: "0.9"
 ```
 
 ## 📊 Image Details
