@@ -98,7 +98,7 @@ app.post('/api/generate-story', async (req, res) => {
         }
       ],
       {
-        maxTokens: Math.min(wordCount * 2, 2000),
+        maxCompletionTokens: Math.min(wordCount * 2, 2000),
         temperature: storyTemperature,
         topP: 0.9
       }
@@ -122,7 +122,7 @@ app.post('/api/generate-story', async (req, res) => {
         }
       ],
       {
-        maxTokens: 50,
+        maxCompletionTokens: 50,
         temperature: 0.8,
         topP: 0.9
       }
@@ -182,7 +182,7 @@ Story: ${story}`;
         }
       ],
       {
-        maxTokens: 1500,
+        maxCompletionTokens: 1500,
         temperature: 0.5,
         responseFormat: { type: 'json_object' }
       }
