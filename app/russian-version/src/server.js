@@ -120,8 +120,7 @@ ${russianInstructions}
         { role: 'user', content: userPrompt }
       ],
       {
-        maxCompletionTokens: Math.max(800, Math.floor(wordCount * 1.5)),
-        temperature: storyTemperature
+        maxCompletionTokens: Math.max(800, Math.floor(wordCount * 1.5))
       }
     );
 
@@ -141,8 +140,7 @@ ${russianInstructions}`;
         { role: 'user', content: titlePrompt }
       ],
       {
-        maxCompletionTokens: 20,
-        temperature: 0.7
+        maxCompletionTokens: 20
       }
     );
 
@@ -252,8 +250,7 @@ ${russianInstructions}
         { role: 'user', content: userPrompt }
       ],
       {
-        maxCompletionTokens: 1200,
-        temperature: 0.7
+        maxCompletionTokens: 1200
       }
     );
 

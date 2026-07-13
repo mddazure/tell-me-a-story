@@ -2,6 +2,8 @@
 
 AI-powered language learning applications that generate engaging stories with comprehension and grammar questions using Azure OpenAI. Available in two versions: **Multi-Language** and **Russian-Only**.
 
+> **⚡ Latest Update (2024):** Applications updated for compatibility with newer GPT models (GPT-4o, GPT-4 Turbo). Now uses `maxCompletionTokens` parameter and default temperature. See [Model Compatibility](#model-compatibility) section for details.
+
 ## 🚀 **Status: Production Ready** ✅
 
 Both applications are **fully functional** and deployed to Docker Hub:
@@ -350,8 +352,27 @@ Both applications use **Azure Managed Identity** (`DefaultAzureCredential`) for 
 |----------|---------|-------------|
 | `PORT` | `3000` | Application port |
 | `NODE_ENV` | `production` | Environment mode |
-| `AZURE_OPENAI_TEMPERATURE` | `0.7` / `0.8` | Story creativity (0.0-1.0). Higher = more varied stories |
 | `AZURE_CLIENT_ID` | - | User Assigned Managed Identity client ID (if not using System Assigned) |
+
+> **Note:** The `AZURE_OPENAI_TEMPERATURE` environment variable is no longer used. Newer GPT models (GPT-4o, GPT-4 2024 versions) only support the default temperature of 1.0 and do not accept custom temperature parameters.
+
+### **Model Compatibility**
+
+Both applications are **optimized for newer GPT models** and compatible with:
+
+✅ **Recommended Models:**
+- `gpt-4o` (GPT-4 Omni)
+- `gpt-4o-mini`
+- `gpt-4` (2024-* versions)
+- `gpt-4-turbo`
+
+🔧 **Recent Updates for Model Compatibility:**
+- Uses `maxCompletionTokens` parameter (newer models)
+- Removed custom `temperature` and `topP` parameters (only default temperature=1.0 is supported)
+- Optimized for Azure OpenAI API version `2024-02-15-preview` and later
+
+⚠️ **Legacy Model Note:**
+If using older GPT-3.5 or GPT-4 models that support temperature configuration, you may need to modify the source code to add back the temperature parameter. The current version is optimized for latest model deployments.
 
 ### **Flexible Azure Infrastructure**
 The Bicep templates support both **new** and **existing** Azure resources:
@@ -521,7 +542,6 @@ tell-me-a-story/
 docker run -p 3000:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
-  -e AZURE_OPENAI_TEMPERATURE="0.9" \
   madedroo/foreign-language-stories:latest
 ```
 **Access:** http://localhost:3000
@@ -532,7 +552,6 @@ docker run -p 3000:3000 \
 docker run -p 3001:3000 \
   -e AZURE_OPENAI_ENDPOINT="https://your-endpoint.openai.azure.com/" \
   -e AZURE_OPENAI_DEPLOYMENT_NAME="gpt-4o" \
-  -e AZURE_OPENAI_TEMPERATURE="0.9" \
   madedroo/russian-story-generator:latest
 ```
 **Access:** http://localhost:3001
