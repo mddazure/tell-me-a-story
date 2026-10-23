@@ -1,0 +1,27 @@
+[
+  {
+    "name": "AZURE_OPENAI_DEPLOYMENT_NAME",
+    "value": "gpt-5.6-luna",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_OPENAI_ENDPOINT",
+    "value": "https://ckazy-mne-razkaz.openai.azure.com/",
+    "slotSetting": false
+  },
+  {
+    "name": "AZURE_OPENAI_TEMPERATURE",
+    "value": "1",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITE_HEALTHCHECK_MAXPINGFAILURES",
+    "value": "10",
+    "slotSetting": false
+  },
+  {
+    "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+    "value": "false",
+    "slotSetting": false
+  }
+]
