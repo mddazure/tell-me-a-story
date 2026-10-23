@@ -1,7 +1,7 @@
 [
   {
     "name": "AZURE_OPENAI_DEPLOYMENT_NAME",
-    "value": "gpt-5.6-luna",
+    "value": "gpt-6-luna",
     "slotSetting": false
   },
   {
